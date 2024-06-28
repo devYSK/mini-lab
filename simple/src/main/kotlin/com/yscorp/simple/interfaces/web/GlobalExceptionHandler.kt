@@ -1,12 +1,14 @@
 package com.yscorp.simple.interfaces.web
 
-import com.yscorp.simple.common.CommonResponse
-import org.slf4j.LoggerFactory
-import org.springframework.http.HttpStatus
+import com.yscorp.simple.common.ErrorDetails
+import com.yscorp.simple.common.ErrorResponse
+import com.yscorp.simple.logger
+import jakarta.validation.ConstraintViolationException
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.bind.support.WebExchangeBindException
+import org.springframework.web.server.ServerWebExchange
 import reactor.core.publisher.Mono
 
 
@@ -14,20 +16,56 @@ import reactor.core.publisher.Mono
 class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception::class)
-    fun handleGenericException(ex: Exception): Mono<ResponseEntity<String>> {
-        return Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred. ${ex::class.java.name}: ${ex.message ?: ""}"))
+    fun handleAllExceptions(ex: Exception, exchange: ServerWebExchange): Mono<ResponseEntity<ErrorResponse>> {
+        log.error(ex) { "An unexpected error occurred: ${ex::class.java.name}: ${ex.message ?: ""}" }
+
+        val errorResponse = ErrorResponse.internalServerError(
+            message = ex.localizedMessage ?: "Internal server error",
+            path = exchange.request.uri.path
+        )
+        return Mono.just(ResponseEntity.status(500).body(errorResponse))
+    }
+
+    @ExceptionHandler(IllegalArgumentException::class)
+    fun handleIllegalArgumentException(ex: IllegalArgumentException, exchange: ServerWebExchange): Mono<ResponseEntity<ErrorResponse>> {
+        val errorResponse = ErrorResponse.badRequest(
+            message = ex.message ?: "Bad request",
+            path = exchange.request.uri.path
+        )
+
+        return Mono.just(ResponseEntity.status(400).body(errorResponse))
+    }
+
+    @ExceptionHandler(ConstraintViolationException::class)
+    fun handleConstraintViolationException(ex: ConstraintViolationException, exchange: ServerWebExchange): Mono<ResponseEntity<ErrorResponse>> {
+        val details = ex.constraintViolations.map { violation ->
+            ErrorDetails(field = violation.propertyPath.toString(), message = violation.message)
+        }
+        val errorResponse = ErrorResponse.badRequest(
+            message = ex.message ?: "Bad request",
+            path = exchange.request.uri.path,
+            details = details
+        )
+        return Mono.just(ResponseEntity.status(400).body(errorResponse))
     }
 
     @ExceptionHandler(WebExchangeBindException::class)
-    fun handlerWebClientException(ex: WebExchangeBindException): Mono<ResponseEntity<CommonResponse<Any>>> {
-        log.error(ex.message, ex)
-        moaLogger.error(ex.message, ex)
+    fun handleWebExchangeBindException(ex: WebExchangeBindException, exchange: ServerWebExchange): Mono<ResponseEntity<ErrorResponse>> {
+        val details = ex.fieldErrors.map { error ->
+            ErrorDetails(field = error.field, message = error.defaultMessage ?: "Invalid value")
+        }
 
-        return Mono.just(ResponseEntity.badRequest().body(CommonResponse<Any>("400", ex.message,)))
+        val errorResponse = ErrorResponse.badRequest(
+            message = ex.message,
+            path = exchange.request.uri.path,
+            details = details
+        )
+
+        return Mono.just(ResponseEntity.status(400).body(errorResponse))
     }
 
     companion object {
-        private val log = LoggerFactory.getLogger(this::class.java)
-        private val moaLogger = LoggerFactory.getLogger("MoALogger")
+        private val log = logger()
     }
+
 }

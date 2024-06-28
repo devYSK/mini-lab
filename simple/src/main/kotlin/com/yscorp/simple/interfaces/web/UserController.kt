@@ -3,6 +3,7 @@ package com.yscorp.simple.interfaces.web
 import com.yscorp.simple.common.CommonResponse
 import com.yscorp.simple.domain.user.User
 import com.yscorp.simple.domain.user.UserService
+import com.yscorp.simple.logger
 import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -13,8 +14,11 @@ class UserController(
     private val userService: UserService
 ) {
 
+    private val log = logger()
+
     @PostMapping
     fun createUser(@RequestBody user: User): Mono<CommonResponse<User>> {
+        log.info { "createUser: $user"}
         return userService.createUser(user)
             .map { CommonResponse("success", "User created successfully", it) }
     }
