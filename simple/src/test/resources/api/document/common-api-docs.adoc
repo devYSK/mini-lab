@@ -1,0 +1,152 @@
+[[index]]
+[id="display-none"]
+=== link:./index-docs.html[처음으로]
+
+[[common]]
+== 공통 사항
+
+API 에 관계없이 아래 사항을 지켜주셔야 합니다.
+
+=== 도메인
+[cols="2,8"]
+|===
+| 환경 | 도메인
+
+| 개발서버
+| `https://test-dabang-agent-tool-api.dabangapp.com`
+
+| 상용서버
+| `https://api-agent-tool.dabangapp.com`
+|===
+
+=== HTTP 응답 상태
+[cols="2,3,5"]
+|===
+| 코드 | 설명 | 남긴말
+
+| 200
+| 성공
+|
+
+| 400
+| 실패
+| 상황별 실패
+
+| 401
+| 인증실패
+| 인증토큰 미발급, 인증토큰 만료, 휴면 계정등
+
+| 403
+| 권한없음
+|
+
+| 410
+| 주소 만료
+|
+
+| 422
+| 인증변조
+| 인증토큰 정보 변조
+|===
+
+=== HTTP 응답 해더
+|===
+| 이름 | 설명 | 남긴말
+
+| Dabang-File-Content-Type
+| 다방 파일 컨텐츠 형식
+| 파일 다운로드시 상세 컨텐츠 형식
+
+|===
+
+=== HTTP 응답본문
+
+==== 성공 형식
+
+[source,json]
+----
+{
+  "code" : 200,
+  "msg" : "성공하였습니다",
+  "result" : {},
+  "responseTime" : "2019-09-01 14:14:14"
+}
+----
+
+==== 실패 형식
+
+[source,json]
+----
+{
+  "code" : 400,
+  "msg" : "실패하였습니다",
+  "errorDetails" : ["아이디를 입력하세요.", "비밀번호를 입력하세요."],
+  "responseTime" : "2019-09-01 14:14:14"
+}
+----
+
+==== 형식 설명
+[cols="2,3,5"]
+|===
+| 필드 | 설명 | 남긴말
+
+| `code`
+| 상태 코드
+| 성공시 200, 실패시 상황별 코드 반환
+
+| `msg`
+| 응답 메세지
+| 성공시 성공하였습니다, 실패시 상황별 메세지 반환
+
+| `result`
+| 성공시 반환될 데이터
+| null, json, json array 반환
+
+| `errorDetails`
+| 실패시 상세 오류 메세지들
+| null, json array 반환
+
+| `responseTime`
+| 응답시간
+| yyyy-MM-dd HH:mm:ss 형식 반환
+|===
+
+
+==== 오류 코드 설명
+[cols="2,2,3,3"]
+|===
+|HTTP 상태 코드 | 본문 상태 코드 | 설명 | 남긴말
+
+| 400
+| 400
+| 요청 정보 유효 하지 않음, 그외 오류
+|
+
+| 400
+| 422
+| 본인인증 정보 유효 하지 않음
+|
+
+|===
+
+++++
+<style>
+#display-none {
+    display: none;
+}
+</style>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+                const tocLinks = document.querySelectorAll('#toc .sectlevel2 a[href="#display-none"]');
+                const hiddenSections = document.querySelectorAll('.sect2 h3[id="display-none"] a[href^="./"]'); // href가 "./"로 시작하는 a 태그 선택
+
+                tocLinks.forEach((link, index) => {
+                    const hiddenSectionLink = hiddenSections[index];
+
+                    if (hiddenSectionLink) {
+                        link.href = hiddenSectionLink.href;
+                    }
+                });
+            });
+</script>
+++++

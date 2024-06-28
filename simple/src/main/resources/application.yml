@@ -1,0 +1,40 @@
+spring:
+  application:
+    name: simple
+
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5432/simple
+    username: postgres
+    password: postgres
+    properties:
+      # ?? ???
+      application-name: my-application
+      connect-timeout: 30s
+      lock-timeout: 30s
+      statement-timeout: 30s
+      sslmode: disable # ?? prefer, require, verify-ca, verify-full
+    pool:
+      max-size: 20
+      initial-size: 10
+      max-idle-time: 30m
+      validation-query: SELECT 1
+  data:
+    r2dbc:
+      repositories:
+        enabled: true
+
+
+springdoc:
+  api-docs:
+    path: /docs/openapi3
+  swagger-ui:
+    path: /swagger-ui.html
+    use-root-path: true
+    url: /docs/openapi3
+
+
+# Optional: Logging settings to help with debugging
+#logging:
+#  level:
+#    io.r2dbc: DEBUG
+#    org.springframework.data.r2dbc: DEBUG

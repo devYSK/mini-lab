@@ -1,0 +1,44 @@
+= API 문서
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 3
+:sectlinks:
+
+[discrete]
+=== 수정이력
+[cols="2,2,6"]
+|===
+| 날짜 | API 문서 | 내용
+
+| 2024-02-01
+| 공통
+| 최초 생성
+
+|===
+
+[id="display-none"]
+=== icon:link[] link:./{html}[{name}]
+
+++++
+<style>
+#display-none {
+    display: none;
+}
+</style>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+                const tocLinks = document.querySelectorAll('#toc .sectlevel2 a[href="#display-none"]');
+                const hiddenSections = document.querySelectorAll('.sect2 h3[id="display-none"] a[href^="./"]'); // href가 "./"로 시작하는 a 태그 선택
+
+                tocLinks.forEach((link, index) => {
+                    const hiddenSectionLink = hiddenSections[index];
+
+                    if (hiddenSectionLink) {
+                        link.href = hiddenSectionLink.href;
+                    }
+                });
+            });
+</script>
+++++

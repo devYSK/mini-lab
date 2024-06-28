@@ -1,24 +1,93 @@
-# Compiled class file
-*.class
+HELP.md
+.gradle
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
 
-# Log file
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+bin/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+### VS Code ###
+.vscode/
+
+### Kotlin ###
+.kotlin
+
+# Node.js 관련 .gitignore 예시
+
+# Logs
+logs
 *.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
-# BlueJ files
-*.ctxt
+# 디렉토리별 로그 파일
+/logs
+logs/**
 
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
+# 디렉토리별 임시 파일
+tmp/
+temp/
 
-# Package Files #
-*.jar
-*.war
-*.nar
-*.ear
-*.zip
-*.tar.gz
-*.rar
+# Node Modules
+node_modules/
 
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
-hs_err_pid*
-replay_pid*
+# 빌드 폴더
+dist/
+build/
+
+# 환경설정 파일
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# 테스트 결과
+/coverage
+
+# OS 또는 편집기별 파일
+.DS_Store
+Thumbs.db
+
+# IDE 설정 파일
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# 프로젝트 빌드 설정 파일
+/.next
+/out
+
+# TypeScript 관련 파일
+*.tsbuildinfo
