@@ -1,4 +1,4 @@
-package com.example.imagedemo
+package com.yscorp.kotlinsharp
 
 import ImageProcessingService
 import kotlinx.coroutines.async
@@ -12,9 +12,11 @@ import org.slf4j.LoggerFactory
 import java.io.File
 import java.net.URL
 import java.nio.file.Files
+import java.nio.file.Paths
 import java.util.*
 import kotlin.reflect.jvm.reflect
 import kotlin.system.measureTimeMillis
+
 
 class ImageProcessingServiceTest {
     private val imageProcessingService = ImageProcessingService()
@@ -31,13 +33,20 @@ class ImageProcessingServiceTest {
     }
 
     @Test
+    fun home() {
+        val userHome = System.getProperty("user.home")
+
+        println(Paths.get(userHome, "node-image", "node_modules").toAbsolutePath().toString())
+    }
+
+    @Test
     fun imageInfo () = runBlocking {
 
         mutableListOf("https://cdn.imweb.me/thumbnail/20221108/6be5b00277948.jpg",
-            "https://www.cosinkorea.com/data/photos/20221146/art_16684142976506_5f5596.jpg",
-            "https://www.jangup.com/news/photo/202207/87459_58853_4823.jpg",
-            "https://www.shutterstock.com/shutterstock/photos/2414690613/display_1500/stock-photo-mythical-d-image-of-pink-dragon-2414690613.jpg",
-            "https://www.shutterstock.com/shutterstock/photos/2460500699/display_1500/stock-photo-outdoor-photo-of-couple-traveling-under-blue-sky-2460500699.jpg"
+            "https://ffm-blog-s3.s3.ap-northeast-2.amazonaws.com/grow/prod/550197/0GE2VBEP7GNQB-1661c354b2e34830a4ec618bb5dd9612.jpeg",
+            "https://ffm-blog-s3.s3.ap-northeast-2.amazonaws.com/grow/prod/550197/0GE2VBEPFGNQD-25195d47bc7a4d7c86482fefc9211daf.jpeg",
+            "https://ffm-blog-s3.s3.ap-northeast-2.amazonaws.com/grow/prod/547040/0GE0VF1Q3GJYH-bac35dbeb0c14ab99dad563e3fe194e8.jpeg",
+            "https://ffm-blog-s3.s3.ap-northeast-2.amazonaws.com/grow/prod/547040/0GE0VF1PZGJYG-ff31d06473db4a0a975cb4f5a8c0f65b.jpeg"
             )
             .asFlow()
             .map { imageUrl ->
@@ -62,7 +71,7 @@ class ImageProcessingServiceTest {
                 it.await()
             }
 
-
+        println()
 //
 //        val imageUrl = "https://i.pinimg.com/originals/02/25/07/0225070cf8ec553ded8a37e5cba74a23.jpg"
 //        val result = imageProcessingService.imageInfo(imageUrl)

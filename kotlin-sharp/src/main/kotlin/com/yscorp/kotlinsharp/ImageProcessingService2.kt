@@ -20,7 +20,13 @@ class ImageProcessingService2 {
     private val objectMapper = jacksonObjectMapper()
 
     fun getNodeScriptPath(): String {
-        return Paths.get(System.getProperty("user.dir"), "../node-image/imageProcessor2.js").toAbsolutePath().toString()
+        return Paths.get(System.getProperty("user.dir"), "src/main/resources/js/imageProcessor2.js").toAbsolutePath().toString()
+    }
+
+    fun getNodePath() : String {
+        val userHome = System.getProperty("user.home")
+
+        return Paths.get(userHome, "node-image", "node_modules").toAbsolutePath().toString()
     }
 
     fun processImageFromMultipart(file: MultipartFile, format: String?, width: Int?, height: Int?, compress: Boolean): ImageProcessingResult2 {
@@ -50,7 +56,7 @@ class ImageProcessingService2 {
         )
 
         val processBuilder = ProcessBuilder(args)
-        processBuilder.environment()["NODE_PATH"] = Paths.get(System.getProperty("user.dir"), "../node-image/node_modules").toAbsolutePath().toString()
+        processBuilder.environment()["NODE_PATH"] = getNodePath()
 
         val process = processBuilder.start()
 
@@ -113,7 +119,7 @@ class ImageProcessingService2 {
         )
 
         val processBuilder = ProcessBuilder(args)
-        processBuilder.environment()["NODE_PATH"] = Paths.get(System.getProperty("user.dir"), "../node-image/node_modules").toAbsolutePath().toString()
+        processBuilder.environment()["NODE_PATH"] = getNodePath()
 
         val process = processBuilder.start()
 
@@ -129,6 +135,7 @@ class ImageProcessingService2 {
             baos.toByteArray()
         }
 
+        println("Output: ${output.size}")
         // JSON 메타데이터를 수신
         val metaDataJson = String(output.takeLastWhile { it.toInt() != 0 }.toByteArray())
         val imageData = output.dropLastWhile { it.toInt() != 0 }.toByteArray()
@@ -143,8 +150,20 @@ class ImageProcessingService2 {
             throw RuntimeException("No output from image compression script")
         }
 
-        val metaData: ImageProcessingResult2 = objectMapper.readValue(metaDataJson)
-        metaData.buffer = imageData
+        println("Process output: \n$metaDataJson")
+        println("Process error output: $errorOutput")
+        println(imageData)
+
+        val jsonResponse = objectMapper.readTree(metaDataJson)
+
+        val imageDataArray = jsonResponse["buffer"]["data"].map { it.asInt().toByte() }.toByteArray()
+        val metaData = ImageProcessingResult2(
+            width = jsonResponse["width"].asInt(),
+            height = jsonResponse["height"].asInt(),
+            size = jsonResponse["size"].asLong(),
+            buffer = imageDataArray
+        )
+
         return metaData
     }
 
@@ -158,7 +177,7 @@ class ImageProcessingService2 {
         )
 
         val processBuilder = ProcessBuilder(args)
-        processBuilder.environment()["NODE_PATH"] = Paths.get(System.getProperty("user.dir"), "../node-image/node_modules").toAbsolutePath().toString()
+        processBuilder.environment()["NODE_PATH"] = getNodePath()
 
         val process = processBuilder.start()
 
@@ -177,6 +196,7 @@ class ImageProcessingService2 {
         val imageData = output.dropLastWhile { it.toInt() != 0 }.toByteArray()
         val errorOutput = process.errorStream.bufferedReader().use { it.readText() }
         val exitCode = process.waitFor()
+
 
         if (exitCode != 0) {
             throw RuntimeException("Image info retrieval failed: $errorOutput")
@@ -193,6 +213,7 @@ class ImageProcessingService2 {
     fun saveProcessedFile(fileBytes: ByteArray, outputPath: String) {
         val file = File(outputPath)
         file.parentFile.mkdirs() // 디렉토리가 없으면 생성
+
         FileOutputStream(file).use { it.write(fileBytes) }
     }
 }
@@ -203,4 +224,6 @@ data class ImageProcessingResult2(
     val height: Int,
     val size: Long,
     val s3FileName: String? = null
-)
+) {
+
+}

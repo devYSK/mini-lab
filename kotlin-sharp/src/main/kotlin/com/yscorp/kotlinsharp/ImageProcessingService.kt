@@ -4,7 +4,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
-import org.springframework.web.servlet.function.ServerResponse.async
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -18,8 +17,13 @@ class ImageProcessingService {
     private val objectMapper = jacksonObjectMapper()
 
     suspend fun getNodeScriptPath(): String {
-        // Node.js 스크립트 경로를 새로운 디렉토리에서 가져오기
         return Paths.get(System.getProperty("user.dir"), "../node-image/imageProcessor.js").toAbsolutePath().toString()
+    }
+
+    suspend fun getNodePath() : String {
+        val userHome = System.getProperty("user.home")
+
+        return Paths.get(userHome, "node-image", "node_modules").toAbsolutePath().toString()
     }
 
     suspend fun processImageFromMultipart(file: MultipartFile, format: String?, width: Int?, height: Int?, compress: Boolean): ImageProcessingResult {
@@ -60,7 +64,7 @@ class ImageProcessingService {
         )
 
         val processBuilder = ProcessBuilder(args)
-        processBuilder.environment()["NODE_PATH"] = Paths.get(System.getProperty("user.dir"), "../node-image/node_modules").toAbsolutePath().toString()
+        processBuilder.environment()["NODE_PATH"] = getNodePath()
 
         val process = withContext(Dispatchers.IO) {
             processBuilder.start()
@@ -117,7 +121,7 @@ class ImageProcessingService {
         )
 
         val processBuilder = ProcessBuilder(args)
-        processBuilder.environment()["NODE_PATH"] = Paths.get(System.getProperty("user.dir"), "../node-image/node_modules").toAbsolutePath().toString()
+        processBuilder.environment()["NODE_PATH"] = getNodePath()
 
         val process = processBuilder.start()
         val exitCode = process.waitFor()
@@ -188,7 +192,7 @@ class ImageProcessingService {
         )
 
         val processBuilder = ProcessBuilder(args)
-        processBuilder.environment()["NODE_PATH"] = Paths.get(System.getProperty("user.dir"), "../node-image/node_modules").toAbsolutePath().toString()
+        processBuilder.environment()["NODE_PATH"] = getNodePath()
 
         val process = processBuilder.start()
         val exitCode = process.waitFor()

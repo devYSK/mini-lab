@@ -1,22 +1,22 @@
-package com.example.imagedemo
+package com.yscorp.kotlinsharp
 
+import com.example.imagedemo.ImageProcessingService2
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import java.io.File
 import java.net.URL
 import java.nio.file.Files
-import java.util.*
 
 @SpringBootTest
 class ImageProcessingService2Test {
 
     private val imageProcessingService = ImageProcessingService2()
+
     @Test
     fun `test processImageFromUrl with stream`() {
         // 테스트할 이미지 URL을 설정합니다.
-        val imageUrl = "https://i.pinimg.com/originals/02/25/07/0225070cf8ec553ded8a37e5cba74a23.jpg"
+        val imageUrl = "https://ffm-blog-s3.s3.ap-northeast-2.amazonaws.com/grow/prod/547040/0GE0VF1PZGJYG-ff31d06473db4a0a975cb4f5a8c0f65b.jpeg"
 
         // URL에서 이미지를 처리하는 메서드를 호출합니다.
         val result = imageProcessingService.processImageFromUrl(imageUrl, "jpg", 100, 100, false)
@@ -61,8 +61,8 @@ class ImageProcessingService2Test {
         val file = File(outputPath)
         assertTrue(file.exists())
 
-        // 테스트 후 파일을 삭제합니다.
-        Files.deleteIfExists(file.toPath())
+//        // 테스트 후 파일을 삭제합니다.
+//        Files.deleteIfExists(file.toPath())
     }
 
     @Test
