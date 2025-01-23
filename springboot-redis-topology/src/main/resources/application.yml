@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: kotlin-springboot-redis
+
+  config:
+    activate:
+      on-profile: local
+
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+      password: 1234
+
+
+cache:
+  properties:
+    - name: cache1
+      ttl: 300
+    - name: cache2
+      ttl: 30
