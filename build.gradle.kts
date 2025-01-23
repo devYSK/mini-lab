@@ -1,10 +1,10 @@
 plugins {
-	id("org.springframework.boot") version "3.3.1"
-	id("io.spring.dependency-management") version "1.1.5"
-	kotlin("jvm") version "1.9.24"
-	kotlin("plugin.spring") version "1.9.24"
+	kotlin("kapt") version "1.9.25"
+	kotlin("jvm") version "1.9.25"
+	kotlin("plugin.spring") version "1.9.25"
+	id("org.springframework.boot") version "3.3.4"
+	id("io.spring.dependency-management") version "1.1.6"
 }
-
 
 allprojects {
 	group = "com.yscorp"
@@ -13,10 +13,6 @@ allprojects {
 		mavenCentral()
 	}
 }
-
-
-group = "com.yscorp"
-version = "0.0.1-SNAPSHOT"
 
 java {
 	toolchain {
@@ -29,11 +25,14 @@ repositories {
 }
 
 
+val kotlinCoroutinesVersion = "1.9.0"
+
 subprojects {
 	repositories {
 		mavenCentral()
 	}
 
+	apply(plugin = "org.jetbrains.kotlin.kapt")
 	apply(plugin = "org.jetbrains.kotlin.jvm")
 	apply(plugin = "org.jetbrains.kotlin.plugin.spring")
 	apply(plugin = "org.springframework.boot")
@@ -53,13 +52,35 @@ subprojects {
 	}
 
 	dependencies {
+		runtimeOnly("io.netty:netty-resolver-dns-native-macos:4.1.104.Final:osx-aarch_64")
+
 		implementation("org.springframework.boot:spring-boot-starter")
 		implementation("org.jetbrains.kotlin:kotlin-reflect")
 		testImplementation("org.springframework.boot:spring-boot-starter-test")
 		testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
 		testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
-		implementation("io.github.oshai:kotlin-logging-jvm:5.1.0")
+		implementation("io.github.oshai:kotlin-logging-jvm:7.0.0")
+
+		implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
+		implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:$kotlinCoroutinesVersion")
+
+		implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutinesVersion")
+		implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:$kotlinCoroutinesVersion")
+		implementation("org.jetbrains.kotlinx:kotlinx-coroutines-slf4j:$kotlinCoroutinesVersion")
+		testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlinCoroutinesVersion")
+
+
+		testImplementation("org.mockito.kotlin:mockito-kotlin:4.1.0")
+		testImplementation("org.springframework.boot:spring-boot-starter-test")
+
+		implementation("org.apache.commons:commons-lang3:3.12.0")
+		implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
+
+		annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
+
+		// https://mvnrepository.com/artifact/com.google.guava/guava
+		implementation("com.google.guava:guava:32.0.0-jre")
 	}
 	configure<JavaPluginExtension> {
 		sourceCompatibility = JavaVersion.VERSION_21
