@@ -1,0 +1,6 @@
+spring:
+  config:
+    import: optional:file:.env[.properties] # 멀티모듈이면 루트 프로젝트에 있어야 한다.
+
+open-ai:
+  api-key: ${API_KEY}
